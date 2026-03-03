@@ -11,12 +11,13 @@ export const metadata = {
   title: "VytalMed — HIMSS Survey",
   description:
     "Tell us: what's the most expensive workflow in healthcare? Enter to win AirPods.",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-  },
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
   themeColor: "#F0F7F4",
 };
 
