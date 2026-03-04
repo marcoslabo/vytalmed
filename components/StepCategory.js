@@ -25,10 +25,10 @@ export default function StepCategory({ onSelect }) {
 
             <div className="step-header">
                 <h2 className="step-header__title">
-                    Where is healthcare bleeding the most money?
+                    Where is healthcare wasting the most time, effort, and money?
                 </h2>
                 <p className="step-header__subtitle">
-                    Pick the workflow you think costs the industry the most.
+                    Pick the workflow you think needs fixing the most.
                 </p>
             </div>
 
