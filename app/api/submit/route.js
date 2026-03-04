@@ -98,7 +98,7 @@ async function sendNotificationEmail({ firstName, email, category, note, apiKey 
             },
             body: JSON.stringify({
                 sender: { name: "VytalMed Expo", email: "noreply@vytalmed.co" },
-                to: [{ email: "mlacayo@estacionvital.com", name: "Marcos" }],
+                to: [{ email: "marcos.bosche@nymbl.app", name: "Marcos" }],
                 subject: `🎯 New Expo Lead: ${firstName} — ${category}`,
                 htmlContent: `
                     <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 500px; margin: 0 auto; padding: 24px;">
