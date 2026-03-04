@@ -72,8 +72,7 @@ async function syncToBrevo({ firstName, email, category, note }) {
         // 2. Send instant notification email to the team
         await sendNotificationEmail({ firstName, email, category, note, apiKey });
 
-        // 3. Send confirmation email to the attendee
-        await sendConfirmationEmail({ firstName, email, category, apiKey });
+        // Confirmation email is handled by Brevo automation (email sequence)
 
     } catch (err) {
         // Don't let Brevo errors block the submission
