@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef } from "react";
 
 export default function StepConfirmation({ onReset }) {
@@ -12,107 +11,75 @@ export default function StepConfirmation({ onReset }) {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
-        const colors = ["#3B9B6E", "#4CAF7D", "#8ECDA7", "#1B3A5C", "#FFD700", "#FF6B6B"];
-        const pieces = [];
+        const confetti = Array.from({ length: 80 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height - canvas.height,
+            r: Math.random() * 5 + 3,
+            d: Math.random() * 2 + 1,
+            color: ["#3B9B6E", "#1B3A5C", "#4CAF7D", "#2D8259", "#FF9F43", "#5B8DEF"][
+                Math.floor(Math.random() * 6)
+            ],
+            tilt: Math.random() * 10 - 5,
+            tiltAngle: Math.random() * Math.PI * 2,
+            tiltSpeed: Math.random() * 0.04 + 0.02,
+        }));
 
-        for (let i = 0; i < 80; i++) {
-            pieces.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height * -1,
-                w: Math.random() * 8 + 4,
-                h: Math.random() * 6 + 3,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                vy: Math.random() * 3 + 2,
-                vx: (Math.random() - 0.5) * 2,
-                rot: Math.random() * 360,
-                vr: (Math.random() - 0.5) * 6,
-                opacity: 1,
-            });
-        }
-
-        let frame;
-        const animate = () => {
+        let frameId;
+        function draw() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let alive = false;
-
-            pieces.forEach((p) => {
-                if (p.opacity <= 0) return;
-                alive = true;
-                p.y += p.vy;
-                p.x += p.vx;
-                p.rot += p.vr;
-
-                if (p.y > canvas.height * 0.8) {
-                    p.opacity -= 0.02;
+            confetti.forEach((c) => {
+                ctx.beginPath();
+                ctx.fillStyle = c.color;
+                ctx.ellipse(c.x, c.y, c.r, c.r * 0.6, c.tilt, 0, Math.PI * 2);
+                ctx.fill();
+                c.y += c.d;
+                c.tiltAngle += c.tiltSpeed;
+                c.tilt = Math.sin(c.tiltAngle) * 10;
+                if (c.y > canvas.height) {
+                    c.y = -10;
+                    c.x = Math.random() * canvas.width;
                 }
-
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate((p.rot * Math.PI) / 180);
-                ctx.globalAlpha = Math.max(0, p.opacity);
-                ctx.fillStyle = p.color;
-                ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-                ctx.restore();
             });
-
-            if (alive) {
-                frame = requestAnimationFrame(animate);
-            }
-        };
-
-        animate();
-
-        return () => {
-            if (frame) cancelAnimationFrame(frame);
-        };
+            frameId = requestAnimationFrame(draw);
+        }
+        draw();
+        const timer = setTimeout(() => cancelAnimationFrame(frameId), 4000);
+        return () => { cancelAnimationFrame(frameId); clearTimeout(timer); };
     }, []);
 
     return (
-        <div className="step-content" key="step-confirmation">
+        <div className="step-content">
             <canvas ref={canvasRef} className="confetti-canvas" />
-
             <div className="confirmation">
                 <div className="confirmation__check">
                     <span className="confirmation__check-icon">✓</span>
                 </div>
-
-                <h1 className="confirmation__title">You&rsquo;re in! 🎧</h1>
-                <p className="confirmation__subtitle">
-                    Thanks for sharing — here&rsquo;s what&rsquo;s coming your way.
-                </p>
+                <h2 className="confirmation__title">You&apos;re in!</h2>
+                <p className="confirmation__subtitle">Check your email for confirmation details.</p>
 
                 <div className="confirmation__perks">
                     <div className="perk-card">
-                        <span className="perk-card__icon">🎰</span>
+                        <div className="perk-card__icon perk-card__icon--blue">🎧</div>
                         <p className="perk-card__text">
-                            <strong>AirPods raffle entry</strong> — winner drawn at the end of
-                            HIMSS
+                            <strong>AirPods Raffle</strong> — Winner announced end of HIMSS
                         </p>
                     </div>
-
                     <div className="perk-card">
-                        <span className="perk-card__icon">📊</span>
+                        <div className="perk-card__icon perk-card__icon--green">📊</div>
                         <p className="perk-card__text">
-                            <strong>Post-HIMSS insights</strong> — what the market said is
-                            healthcare&rsquo;s most expensive workflow
+                            <strong>Post-HIMSS Insights</strong> — We&apos;ll share what the industry said
                         </p>
                     </div>
-
                     <div className="perk-card">
-                        <span className="perk-card__icon">🎁</span>
+                        <div className="perk-card__icon perk-card__icon--orange">🎁</div>
                         <p className="perk-card__text">
-                            <strong>Grab your swag</strong> — ask anyone at the VytalMed booth!
+                            <strong>Booth Swag</strong> — Grab yours before you leave!
                         </p>
                     </div>
                 </div>
 
-                <button
-                    type="button"
-                    className="btn btn--ghost"
-                    onClick={onReset}
-                    id="reset-btn"
-                >
-                    ← Start New Survey
+                <button className="btn btn--ghost" onClick={onReset} type="button">
+                    Start Over
                 </button>
             </div>
         </div>

@@ -1,6 +1,17 @@
 "use client";
-
 import { useState } from "react";
+import Image from "next/image";
+
+const CATEGORY_ICONS = {
+    "Fax / Intake": "/icons/fax-intake.png",
+    "Scheduling": "/icons/scheduling.png",
+    "Staffing / Surge": "/icons/staffing.png",
+    "Case Routing": "/icons/case-routing.png",
+    "Site Onboarding": "/icons/site-onboarding.png",
+    "Reporting": "/icons/reporting.png",
+    "Contracting": "/icons/contracting.png",
+    "Other": "/icons/other.png",
+};
 
 export default function StepContact({ category, onSubmit, onBack }) {
     const [firstName, setFirstName] = useState("");
@@ -8,86 +19,84 @@ export default function StepContact({ category, onSubmit, onBack }) {
     const [note, setNote] = useState("");
     const [errors, setErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
+    const [apiError, setApiError] = useState("");
 
-    const validate = () => {
-        const e = {};
-        if (!firstName.trim()) e.firstName = "First name is required";
-        if (!email.trim()) {
-            e.email = "Email is required";
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            e.email = "Enter a valid work email";
-        }
-        setErrors(e);
-        return Object.keys(e).length === 0;
-    };
+    function validate() {
+        const errs = {};
+        if (!firstName.trim()) errs.firstName = "Name is required";
+        if (!email.trim()) errs.email = "Email is required";
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+            errs.email = "Enter a valid email";
+        return errs;
+    }
 
-    const handleSubmit = async (e) => {
+    async function handleSubmit(e) {
         e.preventDefault();
-        if (!validate()) return;
-
+        const errs = validate();
+        if (Object.keys(errs).length > 0) {
+            setErrors(errs);
+            return;
+        }
+        setErrors({});
         setSubmitting(true);
+        setApiError("");
+
         try {
             const res = await fetch("/api/submit", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    category: category.label,
-                    firstName: firstName.trim(),
-                    email: email.trim().toLowerCase(),
-                    note: note.trim() || null,
-                }),
+                body: JSON.stringify({ category, firstName, email, note }),
             });
-
-            if (!res.ok) {
-                const data = await res.json();
-                throw new Error(data.error || "Submission failed");
-            }
-
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || "Something went wrong");
             onSubmit();
         } catch (err) {
-            setErrors({ submit: err.message });
+            setApiError(err.message || "Something went wrong. Please try again.");
+        } finally {
             setSubmitting(false);
         }
-    };
+    }
+
+    const iconSrc = CATEGORY_ICONS[category] || "/icons/other.png";
 
     return (
-        <div className="step-content" key="step-contact">
+        <div className="step-content">
             <div className="step-header">
-                <p className="step-header__eyebrow">Almost Done</p>
-                <h1 className="step-header__title">Enter to win AirPods 🎧</h1>
+                <h2 className="step-header__title">
+                    Almost there.
+                </h2>
                 <p className="step-header__subtitle">
-                    Just your name &amp; email — 15 seconds
+                    15 seconds — then you&apos;re entered to win.
                 </p>
             </div>
 
             <div className="selected-badge">
-                <span className="selected-badge__icon">{category.icon}</span>
-                {category.label}
-                <span
-                    className="selected-badge__change"
-                    onClick={onBack}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => e.key === "Enter" && onBack()}
-                >
+                <Image
+                    src={iconSrc}
+                    alt={category}
+                    width={18}
+                    height={18}
+                    className="selected-badge__icon"
+                />
+                <span>{category}</span>
+                <button className="selected-badge__change" onClick={onBack} type="button">
                     Change
-                </span>
+                </button>
             </div>
 
             <form onSubmit={handleSubmit} noValidate>
                 <div className="form-group">
-                    <label htmlFor="firstName" className="form-group__label">
+                    <label className="form-group__label" htmlFor="firstName">
                         First Name
                     </label>
                     <input
                         id="firstName"
-                        type="text"
                         className="form-group__input"
-                        placeholder="e.g. Sarah"
+                        type="text"
+                        placeholder="Your first name"
+                        autoComplete="given-name"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
-                        autoComplete="given-name"
-                        autoCapitalize="words"
                     />
                     {errors.firstName && (
                         <p className="form-group__error">{errors.firstName}</p>
@@ -95,18 +104,17 @@ export default function StepContact({ category, onSubmit, onBack }) {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="email" className="form-group__label">
+                    <label className="form-group__label" htmlFor="email">
                         Work Email
                     </label>
                     <input
                         id="email"
-                        type="email"
                         className="form-group__input"
-                        placeholder="sarah@hospital.org"
+                        type="email"
+                        placeholder="you@hospital.org"
+                        autoComplete="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        autoComplete="email"
-                        inputMode="email"
                     />
                     {errors.email && (
                         <p className="form-group__error">{errors.email}</p>
@@ -114,40 +122,30 @@ export default function StepContact({ category, onSubmit, onBack }) {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="note" className="form-group__label">
-                        What&rsquo;s frustrating about it?{" "}
+                    <label className="form-group__label" htmlFor="note">
+                        What&apos;s frustrating about it?{" "}
                         <span className="form-group__label--optional">(optional)</span>
                     </label>
                     <textarea
                         id="note"
                         className="form-group__textarea"
-                        placeholder="e.g. We still fax referrals and lose 30% of them…"
+                        placeholder="e.g. We still fax referrals and lose 30% of them..."
                         value={note}
                         onChange={(e) => setNote(e.target.value)}
-                        rows={2}
-                        maxLength={280}
                     />
                 </div>
 
-                {errors.submit && (
-                    <p className="form-group__error" style={{ marginBottom: 12 }}>
-                        {errors.submit}
-                    </p>
-                )}
+                {apiError && <p className="form-group__error">{apiError}</p>}
 
                 <button
                     type="submit"
                     className="btn btn--primary"
                     disabled={submitting}
-                    id="submit-btn"
                 >
                     {submitting ? (
-                        <>
-                            <span className="btn__spinner" />
-                            Submitting…
-                        </>
+                        <span className="btn__spinner" />
                     ) : (
-                        "Submit & Enter Raffle 🎰"
+                        "Count me in"
                     )}
                 </button>
             </form>

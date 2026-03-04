@@ -1,33 +1,28 @@
 "use client";
-
 import { useState } from "react";
 import Image from "next/image";
-import ProgressBar from "@/components/ProgressBar";
 import StepCategory from "@/components/StepCategory";
 import StepContact from "@/components/StepContact";
 import StepConfirmation from "@/components/StepConfirmation";
+import ProgressBar from "@/components/ProgressBar";
 
 export default function Home() {
   const [step, setStep] = useState(1);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [category, setCategory] = useState(null);
 
-  const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
+  function handleCategorySelect(cat) {
+    setCategory(cat);
     setStep(2);
-  };
+  }
 
-  const handleSubmit = () => {
+  function handleContactSubmit() {
     setStep(3);
-  };
+  }
 
-  const handleBack = () => {
+  function handleReset() {
     setStep(1);
-  };
-
-  const handleReset = () => {
-    setSelectedCategory(null);
-    setStep(1);
-  };
+    setCategory(null);
+  }
 
   return (
     <div className="app-shell">
@@ -37,31 +32,29 @@ export default function Home() {
           src="/vytalmed-logo.png"
           alt="VytalMed"
           width={140}
-          height={40}
+          height={36}
           className="header__logo"
           priority
         />
       </header>
 
       {/* Progress */}
-      <ProgressBar currentStep={step} />
+      <ProgressBar step={step} total={3} />
 
       {/* Steps */}
       {step === 1 && <StepCategory onSelect={handleCategorySelect} />}
       {step === 2 && (
         <StepContact
-          category={selectedCategory}
-          onSubmit={handleSubmit}
-          onBack={handleBack}
+          category={category}
+          onSubmit={handleContactSubmit}
+          onBack={() => setStep(1)}
         />
       )}
       {step === 3 && <StepConfirmation onReset={handleReset} />}
 
       {/* Footer */}
       <footer className="footer">
-        <p className="footer__text">
-          © {new Date().getFullYear()} VytalMed · HIMSS 2025
-        </p>
+        <p className="footer__text">© 2025 VytalMed · HIMSS 2025</p>
       </footer>
     </div>
   );
