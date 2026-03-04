@@ -44,8 +44,8 @@ export default function StepCategory({ onSelect }) {
                             <Image
                                 src={cat.icon}
                                 alt={cat.label}
-                                width={34}
-                                height={34}
+                                width={44}
+                                height={44}
                                 className="category-card__icon"
                             />
                         </div>
