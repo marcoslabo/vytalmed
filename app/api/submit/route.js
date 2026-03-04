@@ -301,9 +301,9 @@ export async function POST(request) {
 
         return Response.json({ success: true });
     } catch (err) {
-        console.error("API error:", err);
+        console.error("API error:", err.message, err.stack);
         return Response.json(
-            { error: "Something went wrong. Please try again." },
+            { error: "Something went wrong. Please try again.", detail: err.message },
             { status: 500 }
         );
     }
