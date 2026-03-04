@@ -54,7 +54,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="footer">
-        <p className="footer__text">© 2025 VytalMed · HIMSS 2025</p>
+        <p className="footer__text">© 2026 VytalMed · HIMSS 2026</p>
       </footer>
     </div>
   );

@@ -194,7 +194,7 @@ async function sendConfirmationEmail({ firstName, email, category, apiKey }) {
 
                         <!-- Footer -->
                         <div style="text-align: center; padding: 16px 24px 32px;">
-                            <p style="margin: 0; font-size: 12px; color: #9BA5AE;">VytalMed · HIMSS 2025</p>
+                            <p style="margin: 0; font-size: 12px; color: #9BA5AE;">VytalMed · HIMSS 2026</p>
                             <p style="margin: 4px 0 0; font-size: 11px; color: #CCD3D9;">You're receiving this because you entered the VytalMed booth survey.</p>
                         </div>
                     </div>
