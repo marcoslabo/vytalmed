@@ -294,10 +294,12 @@ export async function POST(request) {
             }
         }
 
-        // Sync to Brevo (non-blocking — don't let it fail the submission)
-        syncToBrevo(cleanData).catch((err) =>
-            console.error("Background Brevo sync error:", err)
-        );
+        // Sync to Brevo (await to ensure it completes before Vercel kills the function)
+        try {
+            await syncToBrevo(cleanData);
+        } catch (err) {
+            console.error("Brevo sync error (non-fatal):", err.message);
+        }
 
         return Response.json({ success: true });
     } catch (err) {
