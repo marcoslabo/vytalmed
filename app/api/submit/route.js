@@ -97,7 +97,7 @@ async function sendNotificationEmail({ firstName, email, category, note, apiKey 
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                sender: { name: "VytalMed Expo", email: "noreply@vytalmed.co" },
+                sender: { name: "VytalMed Expo", email: "marcos@marcoslacayobosche.com" },
                 to: [{ email: "marcos.bosche@nymbl.app", name: "Marcos" }],
                 subject: `🎯 New Expo Lead: ${firstName} — ${category}`,
                 htmlContent: `
@@ -138,7 +138,7 @@ async function sendConfirmationEmail({ firstName, email, category, apiKey }) {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                sender: { name: "VytalMed", email: "noreply@vytalmed.co" },
+                sender: { name: "VytalMed", email: "marcos@marcoslacayobosche.com" },
                 to: [{ email, name: firstName }],
                 subject: `🎉 You're in, ${firstName}! AirPods raffle entry confirmed`,
                 htmlContent: `
