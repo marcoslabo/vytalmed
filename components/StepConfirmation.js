@@ -43,7 +43,10 @@ export default function StepConfirmation({ onReset }) {
             frameId = requestAnimationFrame(draw);
         }
         draw();
-        const timer = setTimeout(() => cancelAnimationFrame(frameId), 4000);
+        const timer = setTimeout(() => {
+            cancelAnimationFrame(frameId);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }, 4000);
         return () => { cancelAnimationFrame(frameId); clearTimeout(timer); };
     }, []);
 
